@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>MediFlow</title>
+</head>
+
+<body>
+
+    <h1>🏥 MediFlow</h1>
+
+    <h2>Prescription Upload</h2>
+
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+
+        <label>Select Patient</label>
+
+        <br><br>
+
+        <select name="patient">
+
+            <option value="patient1">
+                Patient 1
+            </option>
+
+            <option value="patient2">
+                Patient 2
+            </option>
+
+        </select>
+
+        <br><br>
+
+        <label>Choose Prescription</label>
+
+        <br><br>
+
+        <input
+            type="file"
+            name="document"
+            accept=".pdf,.png,.jpg,.jpeg"
+            required>
+
+        <br><br>
+
+        <button type="submit">
+
+            Upload
+
+        </button>
+
+    </form>
+
+</body>
+
+</html>
