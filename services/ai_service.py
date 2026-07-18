@@ -6,13 +6,10 @@ from PIL import Image
 from dotenv import load_dotenv
 from openai import OpenAI
 
-# Load environment variables
 load_dotenv()
 
-# Tell Python where Tesseract is installed
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
-# Create NVIDIA client
 client = OpenAI(
     api_key=os.getenv("NVIDIA_API_KEY"),
     base_url="https://integrate.api.nvidia.com/v1"
@@ -21,23 +18,20 @@ client = OpenAI(
 
 def extract_text_from_image(image_path):
     image = Image.open(image_path)
-    text = pytesseract.image_to_string(image)
-    return text
+    return pytesseract.image_to_string(image)
 
 
-def extract_medical_information(ocr_text):
+def extract_medical_information(ocr_text, patient_id):
 
     prompt = f"""
 You are a medical document extraction assistant.
 
-Read the following OCR text from a prescription or medical report.
-
 Return ONLY valid JSON.
 
-Use exactly this schema:
+Schema:
 
 {{
-    "patient_id": "",
+    "patient_id": "{patient_id}",
     "type": "",
     "drug_name": [],
     "dosage": [],
@@ -66,27 +60,20 @@ OCR Text:
         ]
     )
 
-    return response.choices[0].message.content
+    ai_text = response.choices[0].message.content.strip()
+
+    return json.loads(ai_text)
 
 
 if __name__ == "__main__":
 
     sample_image = "uploads/sample_prescription.png"
 
-    if not os.path.exists(sample_image):
-        print("Sample image not found.")
-        exit()
-
-    print("Reading image with OCR...\n")
-
     ocr_text = extract_text_from_image(sample_image)
 
-    print("OCR COMPLETE\n")
+    result = extract_medical_information(
+        ocr_text,
+        "patient1"
+    )
 
-    print("Sending text to NVIDIA AI...\n")
-
-    ai_result = extract_medical_information(ocr_text)
-
-    print("AI RESPONSE\n")
-
-    print(ai_result)
+    print(result)

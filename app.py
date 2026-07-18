@@ -1,11 +1,25 @@
 import os
+import json
 
 from flask import Flask, render_template, request
+
+from services.ai_service import (
+    extract_text_from_image,
+    extract_medical_information
+)
+
+from database.db import (
+    create_database,
+    save_document
+)
 
 app = Flask(__name__)
 
 UPLOAD_FOLDER = "uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+# Create the database when the app starts
+create_database()
 
 
 @app.route("/")
@@ -30,15 +44,22 @@ def upload_file():
 
     uploaded_file.save(save_path)
 
-    return f"""
-    <h2>Upload Successful ✅</h2>
+    # OCR
+    ocr_text = extract_text_from_image(save_path)
 
-    <p><strong>Patient:</strong> {patient_id}</p>
+    # AI Extraction
+    document = extract_medical_information(
+        ocr_text,
+        patient_id
+    )
 
-    <p><strong>File:</strong> {uploaded_file.filename}</p>
+    # Save to database
+    save_document(document)
 
-    <a href="/">Upload Another Document</a>
-    """
+    return render_template(
+        "result.html",
+        document=document
+    )
 
 
 if __name__ == "__main__":

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>MediFlow Result</title>
+</head>
+
+<body>
+
+    <h1>🏥 MediFlow</h1>
+
+    <h2>Extraction Successful ✅</h2>
+
+    <h3>Patient</h3>
+    <p>{{ document.patient_id }}</p>
+
+    <h3>Document Type</h3>
+    <p>{{ document.type }}</p>
+
+    <h3>Diagnosis</h3>
+    <p>{{ document.diagnosis }}</p>
+
+    <h3>Doctor</h3>
+    <p>{{ document.doctor_name }}</p>
+
+    <h3>Hospital</h3>
+    <p>{{ document.hospital }}</p>
+
+    <h3>Date</h3>
+    <p>{{ document.date }}</p>
+
+    <h3>Drug Names</h3>
+    <ul>
+        {% for drug in document.drug_name %}
+        <li>{{ drug }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Dosages</h3>
+    <ul>
+        {% for dose in document.dosage %}
+        <li>{{ dose }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Frequencies</h3>
+    <ul>
+        {% for freq in document.frequency %}
+        <li>{{ freq }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Follow-up Instructions</h3>
+    <p>{{ document.follow_up_instructions }}</p>
+
+    <br>
+
+    <a href="/">Upload Another Document</a>
+
+</body>
+
+</html>
