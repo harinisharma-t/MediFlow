@@ -1,25 +1,33 @@
 # MediFlow
 
-MediFlow is an AI-powered medical document analysis system that extracts structured information from medical prescriptions using OCR and a Large Language Model. The application stores patient records, generates a chronological medical timeline, and identifies duplicate medications to assist in safer clinical decision-making.
+MediFlow is an AI-powered clinical decision support system that analyzes medical prescriptions using Optical Character Recognition (OCR) and a Large Language Model (LLM). The application extracts structured medical information, maintains a patient's medical history, and identifies potential medication safety issues through an intuitive web interface.
 
 ---
 
-## Overview
+## Project Overview
 
-The system enables users to upload prescription images, automatically extracts medical information, and organizes patient history into a structured database. It also includes a medication safety module that detects duplicate prescriptions and displays alerts through a dedicated dashboard.
+Healthcare professionals often manage multiple prescriptions for the same patient, making it difficult to quickly review previous medications and identify duplicate prescriptions.
+
+MediFlow addresses this problem by:
+
+- Extracting structured information from prescription images
+- Maintaining a chronological patient timeline
+- Detecting duplicate medications
+- Displaying medication safety alerts
+- Providing an easy-to-use web interface for medical record review
 
 ---
 
 ## Features
 
-- Upload prescription images
-- OCR-based text extraction using Tesseract
+- Prescription image upload
+- OCR-based text extraction using Tesseract OCR
 - AI-powered medical information extraction using NVIDIA Llama API
-- Structured storage of patient records using SQLite
-- Patient timeline with chronological medical history
+- Structured patient record storage using SQLite
+- Patient timeline visualization
 - Duplicate medication detection
-- Safety dashboard for medication alerts
-- Responsive web interface built with Bootstrap
+- Medication safety dashboard
+- Responsive Bootstrap-based user interface
 
 ---
 
@@ -28,7 +36,7 @@ The system enables users to upload prescription images, automatically extracts m
 | Category | Technologies |
 |----------|--------------|
 | Backend | Python, Flask |
-| AI | NVIDIA Llama 3.1 API |
+| AI Model | NVIDIA Llama 3.1 API |
 | OCR | Tesseract OCR |
 | Database | SQLite |
 | Frontend | HTML, Bootstrap 5 |
@@ -43,7 +51,9 @@ MediFlow/
 │
 ├── app.py
 ├── requirements.txt
+├── README.md
 ├── .gitignore
+│
 ├── database/
 │   ├── db.py
 │   └── mediflow.db
@@ -60,8 +70,20 @@ MediFlow/
 │   └── safety.html
 │
 ├── uploads/
-└── README.md
+└── static/
 ```
+
+---
+
+## Application Workflow
+
+1. Upload a prescription image.
+2. Extract text using Tesseract OCR.
+3. Process the extracted text using the NVIDIA Llama model.
+4. Store structured medical information in SQLite.
+5. Generate a patient timeline.
+6. Detect duplicate medications.
+7. Display medication safety alerts.
 
 ---
 
@@ -73,19 +95,19 @@ Clone the repository:
 git clone https://github.com/YOUR_USERNAME/MediFlow.git
 ```
 
-Navigate to the project directory:
+Navigate to the project folder:
 
 ```bash
 cd MediFlow
 ```
 
-Install the required dependencies:
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Create a `.env` file and add your NVIDIA API key:
+Create a `.env` file and add:
 
 ```env
 NVIDIA_API_KEY=your_api_key
@@ -97,24 +119,11 @@ Run the application:
 python app.py
 ```
 
-Open the application in your browser:
+Open your browser and visit:
 
 ```
 http://127.0.0.1:5000
 ```
-
----
-
-## Application Workflow
-
-1. Upload a prescription image.
-2. Extract text using Tesseract OCR.
-3. Process the extracted text using the NVIDIA Llama model.
-4. Store structured medical information in SQLite.
-5. Display the extracted report.
-6. Generate the patient's medical timeline.
-7. Detect duplicate medications.
-8. Display medication safety alerts.
 
 ---
 
@@ -149,6 +158,6 @@ This project was developed for educational and hackathon purposes.
 
 ## Author
 
-**Harini T**
+Harini T
 
 Artificial Intelligence and Machine Learning Engineering Student
