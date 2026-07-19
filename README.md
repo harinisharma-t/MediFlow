@@ -92,7 +92,7 @@ MediFlow/
 Clone the repository:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/MediFlow.git
+git clone https://github.com/harinisharma-t/MediFlow.git
 ```
 
 Navigate to the project folder:
