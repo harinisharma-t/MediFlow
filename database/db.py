@@ -92,8 +92,29 @@ def save_document(document):
     print("Document saved successfully.")
 
 
+def view_documents():
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT * FROM documents")
+
+    rows = cursor.fetchall()
+
+    connection.close()
+
+    if len(rows) == 0:
+        print("No documents found in the database.")
+    else:
+        print("Documents in database:\n")
+        for row in rows:
+            print(row)
+
+
 if __name__ == "__main__":
 
     create_database()
 
-    print("Database ready.")
+    print("Database ready.\n")
+
+    view_documents()

@@ -44,6 +44,11 @@ Schema:
     "raw_text": ""
 }}
 
+IMPORTANT:
+- Use the patient_id exactly as provided in the schema.
+- Do NOT extract or change the patient_id from the document.
+- Return ONLY valid JSON.
+
 OCR Text:
 
 {ocr_text}
@@ -62,7 +67,12 @@ OCR Text:
 
     ai_text = response.choices[0].message.content.strip()
 
-    return json.loads(ai_text)
+    document = json.loads(ai_text)
+
+    # Always use the patient selected in the app
+    document["patient_id"] = patient_id
+
+    return document
 
 
 if __name__ == "__main__":

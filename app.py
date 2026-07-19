@@ -1,11 +1,14 @@
 import os
-import json
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 
 from services.ai_service import (
     extract_text_from_image,
     extract_medical_information
+)
+
+from services.timeline_service import (
+    get_patient_timeline
 )
 
 from database.db import (
@@ -18,7 +21,6 @@ app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# Create the database when the app starts
 create_database()
 
 
@@ -44,22 +46,39 @@ def upload_file():
 
     uploaded_file.save(save_path)
 
-    # OCR
     ocr_text = extract_text_from_image(save_path)
 
-    # AI Extraction
     document = extract_medical_information(
         ocr_text,
         patient_id
     )
 
-    # Save to database
     save_document(document)
 
     return render_template(
         "result.html",
         document=document
     )
+
+
+@app.route("/timeline/<patient_id>")
+def patient_timeline(patient_id):
+
+    timeline = get_patient_timeline(patient_id)
+
+    return render_template(
+        "timeline.html",
+        patient_id=patient_id,
+        timeline=timeline
+    )
+
+
+@app.route("/timeline-json/<patient_id>")
+def patient_timeline_json(patient_id):
+
+    timeline = get_patient_timeline(patient_id)
+
+    return jsonify(timeline)
 
 
 if __name__ == "__main__":
