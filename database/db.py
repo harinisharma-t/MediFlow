@@ -13,6 +13,7 @@ def create_database():
     connection = get_connection()
     cursor = connection.cursor()
 
+    # Documents table
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS documents (
 
@@ -39,6 +40,23 @@ def create_database():
         follow_up_instructions TEXT,
 
         raw_text TEXT
+
+    )
+    """)
+
+    # Flags table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS flags (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        patient_id TEXT,
+
+        document_id INTEGER,
+
+        flag_type TEXT,
+
+        message TEXT
 
     )
     """)
@@ -87,9 +105,45 @@ def save_document(document):
     ))
 
     connection.commit()
+
+    document_id = cursor.lastrowid
+
     connection.close()
 
     print("Document saved successfully.")
+
+    return document_id
+
+
+def save_flag(patient_id, document_id, flag_type, message):
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    INSERT INTO flags (
+
+        patient_id,
+        document_id,
+        flag_type,
+        message
+
+    )
+
+    VALUES (?, ?, ?, ?)
+    """, (
+
+        patient_id,
+        document_id,
+        flag_type,
+        message
+
+    ))
+
+    connection.commit()
+    connection.close()
+
+    print("Flag saved successfully.")
 
 
 def view_documents():

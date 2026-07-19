@@ -11,9 +11,14 @@ from services.timeline_service import (
     get_patient_timeline
 )
 
+from services.safety_service import (
+    check_duplicate_medications
+)
+
 from database.db import (
     create_database,
-    save_document
+    save_document,
+    save_flag
 )
 
 app = Flask(__name__)
@@ -46,14 +51,32 @@ def upload_file():
 
     uploaded_file.save(save_path)
 
+    # OCR
     ocr_text = extract_text_from_image(save_path)
 
+    # AI Extraction
     document = extract_medical_information(
         ocr_text,
         patient_id
     )
 
-    save_document(document)
+    # Save document
+    document_id = save_document(document)
+
+    # Duplicate Medication Check
+    duplicate_drugs = check_duplicate_medications(
+        patient_id,
+        document
+    )
+
+    for drug in duplicate_drugs:
+
+        save_flag(
+            patient_id,
+            document_id,
+            "Duplicate Medication",
+            f"{drug} already exists in previous prescriptions."
+        )
 
     return render_template(
         "result.html",
