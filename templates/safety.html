@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MediFlow Safety Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+{% include 'navbar.html' %}
+
+<div class="container py-5">
+
+    <div class="text-center mb-5">
+
+        <h1 class="fw-bold text-primary">
+            🛡️ MediFlow Safety Dashboard
+        </h1>
+
+        <p class="text-muted fs-5">
+            Patient ID:
+            <span class="fw-bold">{{ patient_id }}</span>
+        </p>
+
+    </div>
+
+    {% if flags %}
+
+        {% for flag in flags %}
+
+            {% if flag.flag_type == "Drug Interaction" %}
+
+                {% set color = "danger" %}
+                {% set icon = "🔴" %}
+
+            {% elif flag.flag_type == "Duplicate Medication" %}
+
+                {% set color = "warning" %}
+                {% set icon = "🟡" %}
+
+            {% elif flag.flag_type == "Duplicate Test" %}
+
+                {% set color = "primary" %}
+                {% set icon = "🔵" %}
+
+            {% else %}
+
+                {% set color = "secondary" %}
+                {% set icon = "⚪" %}
+
+            {% endif %}
+
+            <div class="card shadow-lg border-0 rounded-4 mb-4">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <h5 class="mb-3">
+                            {{ icon }} Safety Alert
+                        </h5>
+
+                        <span class="badge bg-{{ color }}">
+                            {{ flag.flag_type }}
+                        </span>
+
+                    </div>
+
+                    <hr>
+
+                    <p class="fs-5">
+
+                        {{ flag.message }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="card shadow-lg border-0 rounded-4">
+
+            <div class="card-body text-center">
+
+                <h2 class="text-success">
+                    ✅ No Safety Issues Found
+                </h2>
+
+                <p class="lead">
+
+                    No duplicate medications, drug interactions, or duplicate diagnostic tests were detected for this patient.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+    <div class="text-center mt-5">
+
+        <a href="/" class="btn btn-primary btn-lg">
+
+            ← Back to Home
+
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

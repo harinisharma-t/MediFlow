@@ -1,0 +1,24 @@
+body{
+    background: linear-gradient(135deg,#eef6ff,#dbeeff);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.card{
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+.btn-primary{
+    border-radius:10px;
+}
+
+.form-control{
+    border-radius:10px;
+}
+
+h1{
+    letter-spacing:1px;
+}

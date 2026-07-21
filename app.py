@@ -18,7 +18,8 @@ from services.safety_service import (
 from database.db import (
     create_database,
     save_document,
-    save_flag
+    save_flag,
+    get_flags
 )
 
 app = Flask(__name__)
@@ -97,11 +98,16 @@ def patient_timeline(patient_id):
 
 
 @app.route("/timeline-json/<patient_id>")
-def patient_timeline_json(patient_id):
+@app.route("/safety/<patient_id>")
+def safety_dashboard(patient_id):
 
-    timeline = get_patient_timeline(patient_id)
+    flags = get_flags(patient_id)
 
-    return jsonify(timeline)
+    return render_template(
+        "safety.html",
+        patient_id=patient_id,
+        flags=flags
+    )
 
 
 if __name__ == "__main__":

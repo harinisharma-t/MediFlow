@@ -1,55 +1,128 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>MediFlow</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 
 <body>
 
-    <h1>🏥 MediFlow</h1>
+{% include 'navbar.html' %}
 
-    <h2>Prescription Upload</h2>
+<div class="container py-5">
 
-    <form action="/upload" method="POST" enctype="multipart/form-data">
+    <div class="row justify-content-center">
 
-        <label>Select Patient</label>
+        <div class="col-lg-8">
 
-        <br><br>
+            <div class="card shadow-lg border-0 rounded-4">
 
-        <select name="patient">
+                <div class="card-body p-5">
 
-            <option value="patient1">
-                Patient 1
-            </option>
+                    <h1 class="text-center text-primary fw-bold">
+                        🏥 MediFlow
+                    </h1>
 
-            <option value="patient2">
-                Patient 2
-            </option>
+                    <p class="text-center text-muted fs-5 mb-4">
+                        AI-Powered Medical Record Analyzer
+                    </p>
 
-        </select>
+                    <hr>
 
-        <br><br>
+                    <form action="/upload" method="POST" enctype="multipart/form-data">
 
-        <label>Choose Prescription</label>
+                        <div class="mb-4">
 
-        <br><br>
+                            <label class="form-label fw-semibold">
+                                Patient ID
+                            </label>
 
-        <input
-            type="file"
-            name="document"
-            accept=".pdf,.png,.jpg,.jpeg"
-            required>
+                            <input
+                                type="text"
+                                class="form-control form-control-lg"
+                                name="patient"
+                                placeholder="Example: P001"
+                                required>
 
-        <br><br>
+                        </div>
 
-        <button type="submit">
+                        <div class="mb-4">
 
-            Upload
+                            <label class="form-label fw-semibold">
+                                Upload Prescription / Medical Report
+                            </label>
 
-        </button>
+                            <input
+                                type="file"
+                                class="form-control form-control-lg"
+                                name="document"
+                                required>
 
-    </form>
+                        </div>
+
+                        <button
+                            class="btn btn-primary btn-lg w-100"
+                            type="submit">
+
+                            Analyze Document
+
+                        </button>
+
+                    </form>
+
+                    <hr class="my-5">
+
+                    <div class="row text-center">
+
+                        <div class="col-md-4">
+
+                            <h2>📄</h2>
+                            <h6>OCR Extraction</h6>
+                            <p class="text-muted small">
+                                Extract text from prescriptions automatically.
+                            </p>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <h2>🤖</h2>
+                            <h6>AI Analysis</h6>
+                            <p class="text-muted small">
+                                Identify medicines, diagnosis and doctor details.
+                            </p>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <h2>🛡️</h2>
+                            <h6>Safety Engine</h6>
+                            <p class="text-muted small">
+                                Detect duplicate medicines and possible conflicts.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 </body>
 

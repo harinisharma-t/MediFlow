@@ -144,6 +144,32 @@ def save_flag(patient_id, document_id, flag_type, message):
     connection.close()
 
     print("Flag saved successfully.")
+def get_flags(patient_id):
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    SELECT flag_type, message
+    FROM flags
+    WHERE patient_id = ?
+    ORDER BY id DESC
+    """, (patient_id,))
+
+    rows = cursor.fetchall()
+
+    connection.close()
+
+    flags = []
+
+    for row in rows:
+
+        flags.append({
+            "flag_type": row[0],
+            "message": row[1]
+        })
+
+    return flags
 
 
 def view_documents():

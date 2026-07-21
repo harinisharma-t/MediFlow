@@ -1,11 +1,18 @@
+# Environment variables
 .env
 
+# Python cache
 __pycache__/
+*.pyc
 
-uploads/*
-
+# Database
 database/*.db
 
-.vscode/
+# Uploaded files
+uploads/*
 
-*.pyc
+# Keep the uploads folder in Git
+!uploads/.gitkeep
+
+# VS Code settings
+.vscode/
