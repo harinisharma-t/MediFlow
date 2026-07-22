@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request
 
 from services.ai_service import (
     extract_text_from_image,
@@ -19,7 +19,12 @@ from database.db import (
     create_database,
     save_document,
     save_flag,
-    get_flags
+    get_flags,
+    get_total_patients,
+    get_total_documents,
+    get_total_flags,
+    get_recent_patients,
+    patient_exists
 )
 
 app = Flask(__name__)
@@ -30,10 +35,56 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 create_database()
 
 
+# ============================================
+# Dashboard
+# ============================================
+
 @app.route("/")
 def home():
+
+    return render_template(
+        "dashboard.html",
+        total_patients=get_total_patients(),
+        total_documents=get_total_documents(),
+        total_flags=get_total_flags(),
+        recent_patients=get_recent_patients()
+    )
+
+
+# ============================================
+# Search Patient
+# ============================================
+
+@app.route("/search", methods=["POST"])
+def search_patient():
+
+    patient_id = request.form["patient_id"].strip()
+
+    if patient_exists(patient_id):
+        return patient_timeline(patient_id)
+
+    return render_template(
+        "dashboard.html",
+        total_patients=get_total_patients(),
+        total_documents=get_total_documents(),
+        total_flags=get_total_flags(),
+        recent_patients=get_recent_patients(),
+        error="Patient not found."
+    )
+
+
+# ============================================
+# Upload Page
+# ============================================
+
+@app.route("/upload-page")
+def upload_page():
     return render_template("upload.html")
 
+
+# ============================================
+# Upload Prescription
+# ============================================
 
 @app.route("/upload", methods=["POST"])
 def upload_file():
@@ -45,6 +96,8 @@ def upload_file():
     if uploaded_file.filename == "":
         return "No file selected."
 
+    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+
     save_path = os.path.join(
         app.config["UPLOAD_FOLDER"],
         uploaded_file.filename
@@ -52,7 +105,7 @@ def upload_file():
 
     uploaded_file.save(save_path)
 
-    # OCR
+    # OCR Extraction
     ocr_text = extract_text_from_image(save_path)
 
     # AI Extraction
@@ -61,10 +114,10 @@ def upload_file():
         patient_id
     )
 
-    # Save document
+    # Save Document
     document_id = save_document(document)
 
-    # Duplicate Medication Check
+    # Safety Check
     duplicate_drugs = check_duplicate_medications(
         patient_id,
         document
@@ -85,6 +138,10 @@ def upload_file():
     )
 
 
+# ============================================
+# Patient Timeline
+# ============================================
+
 @app.route("/timeline/<patient_id>")
 def patient_timeline(patient_id):
 
@@ -97,7 +154,10 @@ def patient_timeline(patient_id):
     )
 
 
-@app.route("/timeline-json/<patient_id>")
+# ============================================
+# Safety Dashboard
+# ============================================
+
 @app.route("/safety/<patient_id>")
 def safety_dashboard(patient_id):
 
@@ -109,6 +169,10 @@ def safety_dashboard(patient_id):
         flags=flags
     )
 
+
+# ============================================
+# Run Application
+# ============================================
 
 if __name__ == "__main__":
     app.run(debug=True)

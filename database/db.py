@@ -171,6 +171,91 @@ def get_flags(patient_id):
 
     return flags
 
+def get_total_patients():
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT COUNT(DISTINCT patient_id)
+        FROM documents
+    """)
+
+    total = cursor.fetchone()[0]
+
+    connection.close()
+
+    return total
+
+
+def get_total_documents():
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM documents
+    """)
+
+    total = cursor.fetchone()[0]
+
+    connection.close()
+
+    return total
+
+def get_total_flags():
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM flags
+    """)
+
+    total = cursor.fetchone()[0]
+
+    connection.close()
+
+    return total
+
+
+def get_recent_patients(limit=5):
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT DISTINCT patient_id
+        FROM documents
+        ORDER BY id DESC
+        LIMIT ?
+    """, (limit,))
+
+    rows = cursor.fetchall()
+
+    connection.close()
+
+    return [row[0] for row in rows]
+
+
+def patient_exists(patient_id):
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM documents
+        WHERE patient_id = ?
+    """, (patient_id,))
+
+    exists = cursor.fetchone()[0] > 0
+
+    connection.close()
+
+    return exists
 
 def view_documents():
 
@@ -184,17 +269,7 @@ def view_documents():
     connection.close()
 
     if len(rows) == 0:
-        print("No documents found in the database.")
+        print("No documents found.")
     else:
-        print("Documents in database:\n")
         for row in rows:
             print(row)
-
-
-if __name__ == "__main__":
-
-    create_database()
-
-    print("Database ready.\n")
-
-    view_documents()
