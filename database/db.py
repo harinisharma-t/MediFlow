@@ -144,6 +144,8 @@ def save_flag(patient_id, document_id, flag_type, message):
     connection.close()
 
     print("Flag saved successfully.")
+
+
 def get_flags(patient_id):
 
     connection = get_connection()
@@ -273,3 +275,51 @@ def view_documents():
     else:
         for row in rows:
             print(row)
+
+
+def get_patient_summary(patient_id):
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT
+            COUNT(*),
+            MAX(date),
+            diagnosis
+        FROM documents
+        WHERE patient_id = ?
+    """, (patient_id,))
+
+    row = cursor.fetchone()
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM flags
+        WHERE patient_id = ?
+    """, (patient_id,))
+
+    total_flags = cursor.fetchone()[0]
+
+    connection.close()
+
+    if row and row[0] > 0:
+
+        return {
+            "patient_id": patient_id,
+            "total_documents": row[0],
+            "latest_visit": row[1],
+            "latest_diagnosis": row[2],
+            "total_flags": total_flags
+        }
+
+    return None
+
+
+if __name__ == "__main__":
+
+    create_database()
+
+    print("Database ready.\n")
+
+    view_documents()

@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 
 from services.ai_service import (
     extract_text_from_image,
@@ -24,7 +24,8 @@ from database.db import (
     get_total_documents,
     get_total_flags,
     get_recent_patients,
-    patient_exists
+    patient_exists,
+    get_patient_summary
 )
 
 app = Flask(__name__)
@@ -35,9 +36,9 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 create_database()
 
 
-# ============================================
+# =====================================================
 # Dashboard
-# ============================================
+# =====================================================
 
 @app.route("/")
 def home():
@@ -51,9 +52,9 @@ def home():
     )
 
 
-# ============================================
+# =====================================================
 # Search Patient
-# ============================================
+# =====================================================
 
 @app.route("/search", methods=["POST"])
 def search_patient():
@@ -61,7 +62,7 @@ def search_patient():
     patient_id = request.form["patient_id"].strip()
 
     if patient_exists(patient_id):
-        return patient_timeline(patient_id)
+        return redirect(url_for("patient_profile", patient_id=patient_id))
 
     return render_template(
         "dashboard.html",
@@ -73,18 +74,36 @@ def search_patient():
     )
 
 
-# ============================================
+# =====================================================
+# Patient Profile
+# =====================================================
+
+@app.route("/patient/<patient_id>")
+def patient_profile(patient_id):
+
+    summary = get_patient_summary(patient_id)
+
+    if summary is None:
+        return "Patient not found."
+
+    return render_template(
+        "patient_profile.html",
+        summary=summary
+    )
+
+
+# =====================================================
 # Upload Page
-# ============================================
+# =====================================================
 
 @app.route("/upload-page")
 def upload_page():
     return render_template("upload.html")
 
 
-# ============================================
+# =====================================================
 # Upload Prescription
-# ============================================
+# =====================================================
 
 @app.route("/upload", methods=["POST"])
 def upload_file():
@@ -105,19 +124,15 @@ def upload_file():
 
     uploaded_file.save(save_path)
 
-    # OCR Extraction
     ocr_text = extract_text_from_image(save_path)
 
-    # AI Extraction
     document = extract_medical_information(
         ocr_text,
         patient_id
     )
 
-    # Save Document
     document_id = save_document(document)
 
-    # Safety Check
     duplicate_drugs = check_duplicate_medications(
         patient_id,
         document
@@ -138,9 +153,9 @@ def upload_file():
     )
 
 
-# ============================================
-# Patient Timeline
-# ============================================
+# =====================================================
+# Timeline
+# =====================================================
 
 @app.route("/timeline/<patient_id>")
 def patient_timeline(patient_id):
@@ -154,9 +169,9 @@ def patient_timeline(patient_id):
     )
 
 
-# ============================================
+# =====================================================
 # Safety Dashboard
-# ============================================
+# =====================================================
 
 @app.route("/safety/<patient_id>")
 def safety_dashboard(patient_id):
@@ -170,9 +185,9 @@ def safety_dashboard(patient_id):
     )
 
 
-# ============================================
+# =====================================================
 # Run Application
-# ============================================
+# =====================================================
 
 if __name__ == "__main__":
     app.run(debug=True)
