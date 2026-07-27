@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Document History | MediFlow</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-light">
+
+{% include "navbar.html" %}
+
+<div class="container mt-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>Document History</h2>
+
+            <p class="text-muted mb-0">
+                Patient ID: {{ patient_id }}
+            </p>
+
+        </div>
+
+        <a href="/patient/{{ patient_id }}" class="btn btn-secondary">
+            Back to Patient Profile
+        </a>
+
+    </div>
+
+    {% if documents %}
+
+        {% for document in documents %}
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <p><strong>Date</strong></p>
+                        <p>{{ document.date }}</p>
+
+                        <p><strong>Document Type</strong></p>
+                        <p>{{ document.type }}</p>
+
+                        <p><strong>Diagnosis</strong></p>
+                        <p>{{ document.diagnosis }}</p>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <p><strong>Doctor</strong></p>
+                        <p>{{ document.doctor_name }}</p>
+
+                        <p><strong>Hospital</strong></p>
+                        <p>{{ document.hospital }}</p>
+
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <h6>Medicines</h6>
+
+                <ul>
+
+                    {% for medicine in document.drug_name %}
+
+                    <li>{{ medicine }}</li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="alert alert-info">
+
+            No documents available for this patient.
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+
+</html>

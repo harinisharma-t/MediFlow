@@ -315,6 +315,45 @@ def get_patient_summary(patient_id):
 
     return None
 
+def get_patient_documents(patient_id):
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT
+            id,
+            type,
+            diagnosis,
+            doctor_name,
+            hospital,
+            date,
+            drug_name
+        FROM documents
+        WHERE patient_id = ?
+        ORDER BY id DESC
+    """, (patient_id,))
+
+    rows = cursor.fetchall()
+
+    connection.close()
+
+    documents = []
+
+    for row in rows:
+
+        documents.append({
+            "id": row[0],
+            "type": row[1],
+            "diagnosis": row[2],
+            "doctor_name": row[3],
+            "hospital": row[4],
+            "date": row[5],
+            "drug_name": json.loads(row[6])
+        })
+
+    return documents
+
 
 if __name__ == "__main__":
 

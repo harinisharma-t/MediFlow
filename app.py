@@ -25,7 +25,8 @@ from database.db import (
     get_total_flags,
     get_recent_patients,
     patient_exists,
-    get_patient_summary
+    get_patient_summary,
+    get_patient_documents
 )
 
 app = Flask(__name__)
@@ -91,6 +92,20 @@ def patient_profile(patient_id):
         summary=summary
     )
 
+# =====================================================
+# Document History
+# =====================================================
+
+@app.route("/documents/<patient_id>")
+def document_history(patient_id):
+
+    documents = get_patient_documents(patient_id)
+
+    return render_template(
+        "document_history.html",
+        patient_id=patient_id,
+        documents=documents
+    )
 
 # =====================================================
 # Upload Page
@@ -99,6 +114,8 @@ def patient_profile(patient_id):
 @app.route("/upload-page")
 def upload_page():
     return render_template("upload.html")
+
+
 
 
 # =====================================================
@@ -147,10 +164,12 @@ def upload_file():
             f"{drug} already exists in previous prescriptions."
         )
 
-    return render_template(
-        "result.html",
-        document=document
+    return redirect(
+    url_for(
+        "patient_profile",
+        patient_id=patient_id
     )
+)
 
 
 # =====================================================
