@@ -282,17 +282,20 @@ def get_patient_summary(patient_id):
     connection = get_connection()
     cursor = connection.cursor()
 
+    # Summary information
     cursor.execute("""
         SELECT
-            COUNT(*),
+            COUNT(*) AS total_documents,
             MAX(date),
-            diagnosis
+            diagnosis,
+            SUM(json_array_length(drug_name))
         FROM documents
         WHERE patient_id = ?
     """, (patient_id,))
 
     row = cursor.fetchone()
 
+    # Total safety alerts
     cursor.execute("""
         SELECT COUNT(*)
         FROM flags
@@ -300,6 +303,24 @@ def get_patient_summary(patient_id):
     """, (patient_id,))
 
     total_flags = cursor.fetchone()[0]
+
+    # Number of hospitals visited
+    cursor.execute("""
+        SELECT COUNT(DISTINCT hospital)
+        FROM documents
+        WHERE patient_id = ?
+    """, (patient_id,))
+
+    total_hospitals = cursor.fetchone()[0]
+
+    # Number of visits
+    cursor.execute("""
+        SELECT COUNT(DISTINCT date)
+        FROM documents
+        WHERE patient_id = ?
+    """, (patient_id,))
+
+    total_visits = cursor.fetchone()[0]
 
     connection.close()
 
@@ -310,7 +331,10 @@ def get_patient_summary(patient_id):
             "total_documents": row[0],
             "latest_visit": row[1],
             "latest_diagnosis": row[2],
-            "total_flags": total_flags
+            "total_medicines": row[3] or 0,
+            "total_flags": total_flags,
+            "total_hospitals": total_hospitals,
+            "total_visits": total_visits
         }
 
     return None
