@@ -26,7 +26,8 @@ from database.db import (
     get_recent_patients,
     patient_exists,
     get_patient_summary,
-    get_patient_documents
+    get_patient_documents,
+    compare_patient_prescriptions
 )
 
 app = Flask(__name__)
@@ -99,12 +100,41 @@ def patient_profile(patient_id):
 @app.route("/documents/<patient_id>")
 def document_history(patient_id):
 
-    documents = get_patient_documents(patient_id)
+    diagnosis = request.args.get("diagnosis", "").strip()
+
+    document_type = request.args.get("type", "").strip()
+
+    medicine = request.args.get("medicine", "").strip()
+
+    sort = request.args.get("sort", "desc")
+
+    documents = get_patient_documents(
+        patient_id,
+        diagnosis,
+        document_type,
+        medicine,
+        sort
+    )
 
     return render_template(
         "document_history.html",
         patient_id=patient_id,
         documents=documents
+    )
+
+# =====================================================
+# Compare Prescriptions
+# =====================================================
+
+@app.route("/compare/<patient_id>")
+def compare_prescriptions(patient_id):
+
+    comparison = compare_patient_prescriptions(patient_id)
+
+    return render_template(
+        "compare.html",
+        patient_id=patient_id,
+        comparison=comparison
     )
 
 # =====================================================

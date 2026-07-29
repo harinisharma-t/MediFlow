@@ -339,12 +339,18 @@ def get_patient_summary(patient_id):
 
     return None
 
-def get_patient_documents(patient_id):
+def get_patient_documents(
+    patient_id,
+    diagnosis="",
+    document_type="",
+    medicine="",
+    sort="desc"
+):
 
     connection = get_connection()
     cursor = connection.cursor()
 
-    cursor.execute("""
+    query = """
         SELECT
             id,
             type,
@@ -355,8 +361,31 @@ def get_patient_documents(patient_id):
             drug_name
         FROM documents
         WHERE patient_id = ?
-        ORDER BY id DESC
-    """, (patient_id,))
+    """
+
+    parameters = [patient_id]
+
+    if diagnosis:
+
+        query += " AND diagnosis LIKE ?"
+        parameters.append(f"%{diagnosis}%")
+
+    if document_type:
+
+        query += " AND type LIKE ?"
+        parameters.append(f"%{document_type}%")
+
+    if medicine:
+
+        query += " AND drug_name LIKE ?"
+        parameters.append(f"%{medicine}%")
+
+    if sort == "asc":
+        query += " ORDER BY id ASC"
+    else:
+        query += " ORDER BY id DESC"
+
+    cursor.execute(query, parameters)
 
     rows = cursor.fetchall()
 
@@ -367,6 +396,7 @@ def get_patient_documents(patient_id):
     for row in rows:
 
         documents.append({
+
             "id": row[0],
             "type": row[1],
             "diagnosis": row[2],
@@ -374,9 +404,54 @@ def get_patient_documents(patient_id):
             "hospital": row[4],
             "date": row[5],
             "drug_name": json.loads(row[6])
+
         })
 
     return documents
+
+def compare_patient_prescriptions(patient_id):
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT drug_name, date
+        FROM documents
+        WHERE patient_id = ?
+        ORDER BY id DESC
+        LIMIT 2
+    """, (patient_id,))
+
+    rows = cursor.fetchall()
+
+    connection.close()
+
+    if len(rows) < 2:
+
+        return {
+            "latest_date": None,
+            "previous_date": None,
+            "added": [],
+            "removed": [],
+            "common": []
+        }
+
+    latest_medicines = set(json.loads(rows[0][0]))
+    previous_medicines = set(json.loads(rows[1][0]))
+
+    added = sorted(list(latest_medicines - previous_medicines))
+    removed = sorted(list(previous_medicines - latest_medicines))
+    common = sorted(list(latest_medicines & previous_medicines))
+
+    return {
+
+        "latest_date": rows[0][1],
+        "previous_date": rows[1][1],
+        "added": added,
+        "removed": removed,
+        "common": common
+
+    }
 
 
 if __name__ == "__main__":

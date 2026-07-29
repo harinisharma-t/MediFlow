@@ -40,77 +40,160 @@
 
             </h5>
 
+            <form method="GET" class="row g-3 mb-4">
+
+                <div class="col-lg-3 col-md-6">
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="diagnosis"
+                        placeholder="Search Diagnosis"
+                        value="{{ request.args.get('diagnosis', '') }}">
+
+                </div>
+
+                <div class="col-lg-2 col-md-6">
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="type"
+                        placeholder="Document Type"
+                        value="{{ request.args.get('type', '') }}">
+
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="medicine"
+                        placeholder="Search Medicine"
+                        value="{{ request.args.get('medicine', '') }}">
+
+                </div>
+
+                <div class="col-lg-2 col-md-6">
+
+                    <select
+                        class="form-select"
+                        name="sort">
+
+                        <option value="desc"
+                        {% if request.args.get('sort','desc') == 'desc' %}
+                        selected
+                        {% endif %}>
+                            Newest First
+                        </option>
+
+                        <option value="asc"
+                        {% if request.args.get('sort') == 'asc' %}
+                        selected
+                        {% endif %}>
+                            Oldest First
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-lg-1 col-md-6">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary w-100">
+
+                        Go
+
+                    </button>
+
+                </div>
+
+                <div class="col-lg-1 col-md-6">
+
+                    <a
+                        href="/documents/{{ patient_id }}"
+                        class="btn btn-secondary w-100">
+
+                        Reset
+
+                    </a>
+
+                </div>
+
+            </form>
+
             {% if documents %}
 
-            <table class="table table-bordered table-hover align-middle">
+            <div class="table-responsive">
 
-                <thead class="table-light">
+                <table class="table table-bordered table-hover align-middle">
 
-                    <tr>
+                    <thead class="table-light">
 
-                        <th>ID</th>
+                        <tr>
 
-                        <th>Document Type</th>
+                            <th>ID</th>
+                            <th>Type</th>
+                            <th>Diagnosis</th>
+                            <th>Doctor</th>
+                            <th>Hospital</th>
+                            <th>Date</th>
+                            <th>Medicines</th>
 
-                        <th>Diagnosis</th>
+                        </tr>
 
-                        <th>Doctor</th>
+                    </thead>
 
-                        <th>Hospital</th>
+                    <tbody>
 
-                        <th>Date</th>
+                    {% for document in documents %}
 
-                        <th>Medicines</th>
+                        <tr>
 
-                    </tr>
+                            <td>{{ document.id }}</td>
 
-                </thead>
+                            <td>{{ document.type }}</td>
 
-                <tbody>
+                            <td>{{ document.diagnosis }}</td>
 
-                {% for document in documents %}
+                            <td>{{ document.doctor_name }}</td>
 
-                    <tr>
+                            <td>{{ document.hospital }}</td>
 
-                        <td>{{ document.id }}</td>
+                            <td>{{ document.date }}</td>
 
-                        <td>{{ document.type }}</td>
+                            <td>
 
-                        <td>{{ document.diagnosis }}</td>
+                                <ul class="mb-0">
 
-                        <td>{{ document.doctor_name }}</td>
+                                    {% for medicine in document.drug_name %}
 
-                        <td>{{ document.hospital }}</td>
+                                    <li>{{ medicine }}</li>
 
-                        <td>{{ document.date }}</td>
+                                    {% endfor %}
 
-                        <td>
+                                </ul>
 
-                            <ul class="mb-0">
+                            </td>
 
-                                {% for medicine in document.drug_name %}
+                        </tr>
 
-                                <li>{{ medicine }}</li>
+                    {% endfor %}
 
-                                {% endfor %}
+                    </tbody>
 
-                            </ul>
+                </table>
 
-                        </td>
-
-                    </tr>
-
-                {% endfor %}
-
-                </tbody>
-
-            </table>
+            </div>
 
             {% else %}
 
             <div class="alert alert-warning">
 
-                No documents found for this patient.
+                No documents found matching the selected filters.
 
             </div>
 
@@ -118,7 +201,9 @@
 
             <div class="mt-4">
 
-                <a href="/patient/{{ patient_id }}" class="btn btn-secondary">
+                <a
+                    href="/patient/{{ patient_id }}"
+                    class="btn btn-secondary">
 
                     Back to Patient Profile
 
