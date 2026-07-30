@@ -1,6 +1,16 @@
 import os
+import tempfile
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, send_file, redirect, url_for
+
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph
+)
+
+from reportlab.lib.styles import (
+    getSampleStyleSheet
+)
 
 from services.ai_service import (
     extract_text_from_image,
@@ -233,6 +243,109 @@ def safety_dashboard(patient_id):
         flags=flags
     )
 
+# =====================================================
+# Export Patient History as PDF
+# =====================================================
+
+@app.route("/export/<patient_id>")
+def export_patient_pdf(patient_id):
+
+    summary = get_patient_summary(patient_id)
+    documents = get_patient_documents(patient_id)
+
+    temp_file = tempfile.NamedTemporaryFile(
+        delete=False,
+        suffix=".pdf"
+    )
+
+    pdf = SimpleDocTemplate(temp_file.name)
+
+    styles = getSampleStyleSheet()
+
+    elements = []
+
+    elements.append(
+        Paragraph(
+            "<b>MediFlow Patient Report</b>",
+            styles["Heading1"]
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"<b>Patient ID:</b> {patient_id}",
+            styles["Normal"]
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"<b>Total Documents:</b> {summary['total_documents']}",
+            styles["Normal"]
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"<b>Total Safety Alerts:</b> {summary['total_flags']}",
+            styles["Normal"]
+        )
+    )
+
+    elements.append(
+        Paragraph("<br/>", styles["Normal"])
+    )
+
+    for document in documents:
+
+        elements.append(
+            Paragraph(
+                f"<b>Date:</b> {document['date']}",
+                styles["Heading3"]
+            )
+        )
+
+        elements.append(
+            Paragraph(
+                f"<b>Diagnosis:</b> {document['diagnosis']}",
+                styles["Normal"]
+            )
+        )
+
+        elements.append(
+            Paragraph(
+                f"<b>Doctor:</b> {document['doctor_name']}",
+                styles["Normal"]
+            )
+        )
+
+        elements.append(
+            Paragraph(
+                f"<b>Hospital:</b> {document['hospital']}",
+                styles["Normal"]
+            )
+        )
+
+        medicines = ", ".join(document["drug_name"])
+
+        elements.append(
+            Paragraph(
+                f"<b>Medicines:</b> {medicines}",
+                styles["Normal"]
+            )
+        )
+
+        elements.append(
+            Paragraph("<br/>", styles["Normal"])
+        )
+
+    pdf.build(elements)
+
+    return send_file(
+        temp_file.name,
+        as_attachment=True,
+        download_name=f"{patient_id}_report.pdf"
+    )
 
 # =====================================================
 # Run Application
