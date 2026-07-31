@@ -409,6 +409,41 @@ def get_patient_documents(
 
     return documents
 
+def get_recent_documents(limit=5):
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT
+            patient_id,
+            diagnosis,
+            doctor_name,
+            date
+        FROM documents
+        ORDER BY id DESC
+        LIMIT ?
+    """, (limit,))
+
+    rows = cursor.fetchall()
+
+    connection.close()
+
+    documents = []
+
+    for row in rows:
+
+        documents.append({
+
+            "patient_id": row[0],
+            "diagnosis": row[1],
+            "doctor_name": row[2],
+            "date": row[3]
+
+        })
+
+    return documents
+
 def compare_patient_prescriptions(patient_id):
 
     connection = get_connection()
