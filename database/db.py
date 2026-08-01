@@ -488,6 +488,70 @@ def compare_patient_prescriptions(patient_id):
 
     }
 
+def get_top_diagnosis():
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT diagnosis, COUNT(*)
+        FROM documents
+        WHERE diagnosis IS NOT NULL
+          AND diagnosis != ''
+        GROUP BY diagnosis
+        ORDER BY COUNT(*) DESC
+        LIMIT 1
+    """)
+
+    row = cursor.fetchone()
+
+    connection.close()
+
+    if row:
+        return row[0]
+
+    return "No Data"
+
+
+def get_top_medicine():
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT drug_name
+        FROM documents
+    """)
+
+    rows = cursor.fetchall()
+
+    connection.close()
+
+    medicines = {}
+
+    for row in rows:
+
+        try:
+            drugs = json.loads(row[0])
+
+            for drug in drugs:
+
+                drug = drug.strip()
+
+                medicines[drug] = medicines.get(drug, 0) + 1
+
+        except:
+            pass
+
+    if medicines:
+
+        return max(
+            medicines,
+            key=medicines.get
+        )
+
+    return "No Data"
+
 
 if __name__ == "__main__":
 

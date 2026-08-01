@@ -34,10 +34,13 @@ from database.db import (
     get_total_documents,
     get_total_flags,
     get_recent_patients,
+    get_recent_documents,
     patient_exists,
     get_patient_summary,
     get_patient_documents,
-    compare_patient_prescriptions
+    compare_patient_prescriptions,
+    get_top_diagnosis,
+    get_top_medicine
 )
 
 app = Flask(__name__)
@@ -60,7 +63,10 @@ def home():
         total_patients=get_total_patients(),
         total_documents=get_total_documents(),
         total_flags=get_total_flags(),
-        recent_patients=get_recent_patients()
+        recent_patients=get_recent_patients(),
+        recent_documents=get_recent_documents(),
+        top_diagnosis=get_top_diagnosis(),
+        top_medicine=get_top_medicine()
     )
 
 

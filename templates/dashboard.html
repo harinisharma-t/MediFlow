@@ -21,7 +21,7 @@
 
 <div class="container py-5">
 
-    <h1 class="text-center text-primary fw-bold mb-5">
+    <h1 class="text-center mb-5">
 
         MediFlow Dashboard
 
@@ -29,98 +29,107 @@
 
     <div class="row g-4 mb-5">
 
-        <div class="col-lg-4">
-
-            <div class="card shadow border-0 h-100 text-center">
-
+        <div class="col-md-4">
+            <div class="card shadow text-center">
                 <div class="card-body">
-
                     <h2>{{ total_patients }}</h2>
-
-                    <p class="mb-0">Total Patients</p>
-
+                    <p>Total Patients</p>
                 </div>
-
             </div>
-
         </div>
 
-        <div class="col-lg-4">
-
-            <div class="card shadow border-0 h-100 text-center">
-
+        <div class="col-md-4">
+            <div class="card shadow text-center">
                 <div class="card-body">
-
                     <h2>{{ total_documents }}</h2>
-
-                    <p class="mb-0">Documents Uploaded</p>
-
+                    <p>Total Documents</p>
                 </div>
-
             </div>
-
         </div>
 
-        <div class="col-lg-4">
-
-            <div class="card shadow border-0 h-100 text-center">
-
+        <div class="col-md-4">
+            <div class="card shadow text-center">
                 <div class="card-body">
-
                     <h2>{{ total_flags }}</h2>
-
-                    <p class="mb-0">Safety Alerts</p>
-
+                    <p>Safety Alerts</p>
                 </div>
-
             </div>
-
         </div>
 
     </div>
 
-    <div class="row">
+    <div class="row g-4 mb-5">
 
-        <div class="col-lg-6 mb-4">
+        <div class="col-md-6">
 
-            <div class="card shadow border-0">
+            <div class="card shadow h-100">
 
-                <div class="card-header bg-primary text-white">
+                <div class="card-header">
 
-                    Recent Patients
+                    Analytics
 
                 </div>
 
                 <div class="card-body">
 
-                    {% if recent_patients %}
+                    <p>
+                        <strong>Most Common Diagnosis:</strong><br>
+                        {{ top_diagnosis }}
+                    </p>
 
-                        <ul class="list-group">
+                    <p>
+                        <strong>Most Prescribed Medicine:</strong><br>
+                        {{ top_medicine }}
+                    </p>
 
-                            {% for patient in recent_patients %}
+                </div>
 
-                            <li class="list-group-item">
+            </div>
 
-                                <a href="/patient/{{ patient }}"
-                                   class="text-decoration-none">
+        </div>
 
-                                    {{ patient }}
+        <div class="col-md-6">
 
-                                </a>
+            <div class="card shadow h-100">
 
-                            </li>
+                <div class="card-header">
 
-                            {% endfor %}
+                    Search Patient
 
-                        </ul>
+                </div>
 
-                    {% else %}
+                <div class="card-body">
 
-                        <p class="mb-0">
+                    <form action="/search" method="POST">
 
-                            No patients available.
+                        <div class="input-group">
 
-                        </p>
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="patient_id"
+                                placeholder="Enter Patient ID"
+                                required>
+
+                            <button
+                                class="btn btn-primary"
+                                type="submit">
+
+                                Search
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                    {% if error %}
+
+                    <div class="alert alert-danger mt-3">
+
+                        {{ error }}
+
+                    </div>
 
                     {% endif %}
 
@@ -130,11 +139,47 @@
 
         </div>
 
-        <div class="col-lg-6 mb-4">
+    </div>
 
-            <div class="card shadow border-0">
+    <div class="row g-4">
 
-                <div class="card-header bg-success text-white">
+        <div class="col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-header">
+
+                    Recent Patients
+
+                </div>
+
+                <ul class="list-group list-group-flush">
+
+                    {% for patient in recent_patients %}
+
+                    <li class="list-group-item">
+
+                        <a href="/patient/{{ patient }}">
+
+                            {{ patient }}
+
+                        </a>
+
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-header">
 
                     Recent Documents
 
@@ -142,53 +187,39 @@
 
                 <div class="card-body">
 
-                    {% if recent_documents %}
+                    <table class="table">
 
-                        <table class="table table-hover">
+                        <thead>
 
-                            <thead>
+                            <tr>
 
-                                <tr>
+                                <th>Patient</th>
+                                <th>Diagnosis</th>
+                                <th>Date</th>
 
-                                    <th>Patient</th>
+                            </tr>
 
-                                    <th>Diagnosis</th>
+                        </thead>
 
-                                    <th>Date</th>
+                        <tbody>
 
-                                </tr>
+                        {% for document in recent_documents %}
 
-                            </thead>
+                            <tr>
 
-                            <tbody>
+                                <td>{{ document.patient_id }}</td>
 
-                            {% for document in recent_documents %}
+                                <td>{{ document.diagnosis }}</td>
 
-                                <tr>
+                                <td>{{ document.date }}</td>
 
-                                    <td>{{ document.patient_id }}</td>
+                            </tr>
 
-                                    <td>{{ document.diagnosis }}</td>
+                        {% endfor %}
 
-                                    <td>{{ document.date }}</td>
+                        </tbody>
 
-                                </tr>
-
-                            {% endfor %}
-
-                            </tbody>
-
-                        </table>
-
-                    {% else %}
-
-                        <p class="mb-0">
-
-                            No recent documents.
-
-                        </p>
-
-                    {% endif %}
+                    </table>
 
                 </div>
 
@@ -198,12 +229,11 @@
 
     </div>
 
-    <div class="text-center mt-4">
+    <div class="text-center mt-5">
 
-        <a href="/upload-page"
-           class="btn btn-primary btn-lg">
+        <a href="/upload-page" class="btn btn-primary btn-lg">
 
-            Upload New Prescription
+            Upload Prescription
 
         </a>
 
