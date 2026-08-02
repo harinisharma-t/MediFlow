@@ -5,8 +5,6 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Prescription Comparison | MediFlow</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -19,167 +17,95 @@
 
 {% include 'navbar.html' %}
 
-<div class="container mt-5">
+<div class="container py-5">
 
-    <div class="card shadow-lg border-0">
+    <h2 class="mb-4">
 
-        <div class="card-header bg-primary text-white">
+        Prescription Comparison
 
-            <h2 class="mb-0">
-                Prescription Comparison
-            </h2>
+    </h2>
 
-        </div>
+    {% if comparison %}
+
+    <div class="card shadow">
 
         <div class="card-body">
 
-            {% if comparison.latest_date %}
+            <h5>Previous Diagnosis</h5>
 
-            <p>
+            <p>{{ comparison.previous.diagnosis }}</p>
 
-                Comparing prescriptions from
-                <strong>{{ comparison.previous_date }}</strong>
-                and
-                <strong>{{ comparison.latest_date }}</strong>
+            <h5>Latest Diagnosis</h5>
 
-            </p>
+            <p>{{ comparison.current.diagnosis }}</p>
 
-            <div class="row mt-4">
+            <hr>
 
-                <div class="col-md-4">
+            <div class="row">
 
-                    <div class="card border-success">
+                <div class="col-md-6">
 
-                        <div class="card-header bg-success text-white">
+                    <h4 class="text-success">
 
-                            Added Medicines
+                        Added Medicines
 
-                        </div>
+                    </h4>
 
-                        <div class="card-body">
+                    <ul>
 
-                            {% if comparison.added %}
+                    {% for medicine in comparison.added %}
 
-                            <ul>
+                        <li>{{ medicine }}</li>
 
-                                {% for medicine in comparison.added %}
+                    {% else %}
 
-                                <li>{{ medicine }}</li>
+                        <li>None</li>
 
-                                {% endfor %}
+                    {% endfor %}
 
-                            </ul>
-
-                            {% else %}
-
-                            <p>No new medicines.</p>
-
-                            {% endif %}
-
-                        </div>
-
-                    </div>
+                    </ul>
 
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-6">
 
-                    <div class="card border-danger">
+                    <h4 class="text-danger">
 
-                        <div class="card-header bg-danger text-white">
+                        Removed Medicines
 
-                            Removed Medicines
+                    </h4>
 
-                        </div>
+                    <ul>
 
-                        <div class="card-body">
+                    {% for medicine in comparison.removed %}
 
-                            {% if comparison.removed %}
+                        <li>{{ medicine }}</li>
 
-                            <ul>
+                    {% else %}
 
-                                {% for medicine in comparison.removed %}
+                        <li>None</li>
 
-                                <li>{{ medicine }}</li>
+                    {% endfor %}
 
-                                {% endfor %}
-
-                            </ul>
-
-                            {% else %}
-
-                            <p>No medicines removed.</p>
-
-                            {% endif %}
-
-                        </div>
-
-                    </div>
+                    </ul>
 
                 </div>
-
-                <div class="col-md-4">
-
-                    <div class="card border-primary">
-
-                        <div class="card-header bg-primary text-white">
-
-                            Continued Medicines
-
-                        </div>
-
-                        <div class="card-body">
-
-                            {% if comparison.common %}
-
-                            <ul>
-
-                                {% for medicine in comparison.common %}
-
-                                <li>{{ medicine }}</li>
-
-                                {% endfor %}
-
-                            </ul>
-
-                            {% else %}
-
-                            <p>No common medicines.</p>
-
-                            {% endif %}
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            {% else %}
-
-            <div class="alert alert-warning">
-
-                At least two prescriptions are required for comparison.
-
-            </div>
-
-            {% endif %}
-
-            <div class="mt-4">
-
-                <a href="/patient/{{ patient_id }}"
-                   class="btn btn-secondary">
-
-                    Back to Patient Profile
-
-                </a>
 
             </div>
 
         </div>
 
     </div>
+
+    {% else %}
+
+    <div class="alert alert-warning">
+
+        At least two prescriptions are required for comparison.
+
+    </div>
+
+    {% endif %}
 
 </div>
 

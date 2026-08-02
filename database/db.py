@@ -450,7 +450,7 @@ def compare_patient_prescriptions(patient_id):
     cursor = connection.cursor()
 
     cursor.execute("""
-        SELECT drug_name, date
+        SELECT diagnosis, drug_name, date
         FROM documents
         WHERE patient_id = ?
         ORDER BY id DESC
@@ -462,30 +462,31 @@ def compare_patient_prescriptions(patient_id):
     connection.close()
 
     if len(rows) < 2:
+        return None
 
-        return {
-            "latest_date": None,
-            "previous_date": None,
-            "added": [],
-            "removed": [],
-            "common": []
-        }
+    current = {
+        "diagnosis": rows[0][0],
+        "medicines": json.loads(rows[0][1]),
+        "date": rows[0][2]
+    }
 
-    latest_medicines = set(json.loads(rows[0][0]))
-    previous_medicines = set(json.loads(rows[1][0]))
+    previous = {
+        "diagnosis": rows[1][0],
+        "medicines": json.loads(rows[1][1]),
+        "date": rows[1][2]
+    }
 
-    added = sorted(list(latest_medicines - previous_medicines))
-    removed = sorted(list(previous_medicines - latest_medicines))
-    common = sorted(list(latest_medicines & previous_medicines))
+    current_set = set(current["medicines"])
+    previous_set = set(previous["medicines"])
+
+    added = sorted(list(current_set - previous_set))
+    removed = sorted(list(previous_set - current_set))
 
     return {
-
-        "latest_date": rows[0][1],
-        "previous_date": rows[1][1],
+        "current": current,
+        "previous": previous,
         "added": added,
-        "removed": removed,
-        "common": common
-
+        "removed": removed
     }
 
 def get_top_diagnosis():
