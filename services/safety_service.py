@@ -1,76 +1,72 @@
-import sqlite3
-import json
+from database.db import get_patient_documents
 
-DATABASE_NAME = "database/mediflow.db"
+# Sample interaction database
+INTERACTIONS = {
+    ("Amoxicillin", "Azithromycin"):
+        "Both antibiotics should only be used together if prescribed.",
 
+    ("Paracetamol", "Ibuprofen"):
+        "Usually safe together, but prolonged combined use should be monitored.",
 
-def get_existing_documents(patient_id):
+    ("Metformin", "Prednisone"):
+        "Prednisone may increase blood sugar and reduce Metformin effectiveness.",
 
-    connection = sqlite3.connect(DATABASE_NAME)
-    connection.row_factory = sqlite3.Row
-
-    cursor = connection.cursor()
-
-    cursor.execute("""
-        SELECT *
-        FROM documents
-        WHERE patient_id = ?
-    """, (patient_id,))
-
-    rows = cursor.fetchall()
-
-    connection.close()
-
-    documents = []
-
-    for row in rows:
-
-        document = dict(row)
-
-        document["drug_name"] = json.loads(document["drug_name"])
-        document["dosage"] = json.loads(document["dosage"])
-        document["frequency"] = json.loads(document["frequency"])
-
-        documents.append(document)
-
-    return documents
+    ("Warfarin", "Aspirin"):
+        "High risk of bleeding when used together."
+}
 
 
-def check_duplicate_medications(patient_id, new_document):
+def check_duplicate_medications(patient_id, current_document):
 
-    existing_documents = get_existing_documents(patient_id)
+    previous_documents = get_patient_documents(patient_id)
 
-    existing_drugs = set()
+    previous_drugs = set()
 
-    for document in existing_documents:
+    for document in previous_documents:
 
         for drug in document["drug_name"]:
-            existing_drugs.add(drug.lower().strip())
 
-    duplicate_drugs = []
+            previous_drugs.add(drug)
 
-    for drug in new_document["drug_name"]:
+    duplicates = []
 
-        if drug.lower().strip() in existing_drugs:
-            duplicate_drugs.append(drug)
+    for drug in current_document["drug_name"]:
 
-    return duplicate_drugs
+        if drug in previous_drugs:
+
+            duplicates.append(drug)
+
+    return duplicates
 
 
-if __name__ == "__main__":
+def check_drug_interactions(drug_list):
 
-    sample_document = {
-        "drug_name": [
-            "Paracetamol",
-            "Vitamin C",
-            "Cetirizine"
-        ]
-    }
+    warnings = []
 
-    duplicates = check_duplicate_medications(
-        "patient1",
-        sample_document
-    )
+    for drug1 in drug_list:
 
-    print("Duplicate Medicines Found:")
-    print(duplicates)
+        for drug2 in drug_list:
+
+            if drug1 == drug2:
+                continue
+
+            pair = (drug1, drug2)
+            reverse_pair = (drug2, drug1)
+
+            if pair in INTERACTIONS:
+
+                warnings.append({
+                    "drug1": drug1,
+                    "drug2": drug2,
+                    "warning": INTERACTIONS[pair]
+                })
+
+            elif reverse_pair in INTERACTIONS:
+
+                warnings.append({
+                    "drug1": drug1,
+                    "drug2": drug2,
+                    "warning": INTERACTIONS[reverse_pair]
+                })
+
+    return warnings

@@ -22,7 +22,8 @@ from services.timeline_service import (
 )
 
 from services.safety_service import (
-    check_duplicate_medications
+    check_duplicate_medications,
+    check_drug_interactions
 )
 
 from database.db import (
@@ -196,6 +197,7 @@ def upload_file():
 
     document_id = save_document(document)
 
+    # Duplicate medicines
     duplicate_drugs = check_duplicate_medications(
         patient_id,
         document
@@ -210,13 +212,26 @@ def upload_file():
             f"{drug} already exists in previous prescriptions."
         )
 
-    return redirect(
-    url_for(
-        "patient_profile",
-        patient_id=patient_id
+    # Drug interactions
+    interaction_warnings = check_drug_interactions(
+        document["drug_name"]
     )
-)
 
+    for interaction in interaction_warnings:
+
+        save_flag(
+            patient_id,
+            document_id,
+            "Drug Interaction",
+            f"{interaction['drug1']} + {interaction['drug2']}: {interaction['warning']}"
+        )
+
+    return redirect(
+        url_for(
+            "patient_profile",
+            patient_id=patient_id
+        )
+    )
 
 # =====================================================
 # Timeline
@@ -356,7 +371,6 @@ def export_patient_pdf(patient_id):
 # =====================================================
 # Run Application
 # =====================================================
-
 
 if __name__ == "__main__":
     app.run(debug=True)
