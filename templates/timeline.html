@@ -47,9 +47,31 @@
                         📅 {{ doc.date }}
                     </h5>
 
-                    <span class="badge bg-success fs-6">
-                        Medical Record
-                    </span>
+                    {% if doc.type == "Prescription" %}
+
+<span class="badge bg-success fs-6">
+    Prescription
+</span>
+
+{% elif doc.type == "Diagnostic Report" %}
+
+<span class="badge bg-primary fs-6">
+    Diagnostic Report
+</span>
+
+{% elif doc.type == "Discharge Summary" %}
+
+<span class="badge bg-danger fs-6">
+    Discharge Summary
+</span>
+
+{% else %}
+
+<span class="badge bg-secondary fs-6">
+    {{ doc.type }}
+</span>
+
+{% endif %}
 
                 </div>
 
