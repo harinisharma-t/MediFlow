@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>AI Patient Summary</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container mt-5">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-primary text-white">
+            <h2>AI Patient Summary</h2>
+        </div>
+
+        <div class="card-body">
+
+            <h5>Patient ID: {{ patient_id }}</h5>
+
+            <hr>
+
+            <p><strong>Total Documents:</strong> {{ summary.total_documents }}</p>
+
+            <p><strong>Latest Diagnosis:</strong> {{ summary.latest_diagnosis }}</p>
+
+            <p><strong>Total Safety Alerts:</strong> {{ summary.total_flags }}</p>
+
+            <hr>
+
+            <h4>Recent Medicines</h4>
+
+            <ul>
+
+            {% for document in documents %}
+
+                {% for medicine in document.drug_name %}
+
+                    <li>{{ medicine }}</li>
+
+                {% endfor %}
+
+            {% endfor %}
+
+            </ul>
+
+            <hr>
+
+            <h4>Safety Alerts</h4>
+
+            <ul>
+
+            {% for flag in flags %}
+
+                <li>{{ flag.flag_type }} : {{ flag.message }}</li>
+
+            {% endfor %}
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

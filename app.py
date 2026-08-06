@@ -265,6 +265,25 @@ def safety_dashboard(patient_id):
     )
 
 # =====================================================
+# AI Patient Summary
+# =====================================================
+
+@app.route("/summary/<patient_id>")
+def patient_summary(patient_id):
+
+    summary = get_patient_summary(patient_id)
+    documents = get_patient_documents(patient_id)
+    flags = get_flags(patient_id)
+
+    return render_template(
+        "summary.html",
+        patient_id=patient_id,
+        summary=summary,
+        documents=documents,
+        flags=flags
+    )
+
+# =====================================================
 # Export Patient History as PDF
 # =====================================================
 
