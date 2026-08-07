@@ -41,7 +41,8 @@ from database.db import (
     get_patient_documents,
     compare_patient_prescriptions,
     get_top_diagnosis,
-    get_top_medicine
+    get_top_medicine,
+    get_upcoming_followups
 )
 
 app = Flask(__name__)
@@ -281,6 +282,20 @@ def patient_summary(patient_id):
         summary=summary,
         documents=documents,
         flags=flags
+    )
+
+# =====================================================
+# Follow-up Reminders
+# =====================================================
+
+@app.route("/followups")
+def followups():
+
+    reminders = get_upcoming_followups()
+
+    return render_template(
+        "followups.html",
+        reminders=reminders
     )
 
 # =====================================================

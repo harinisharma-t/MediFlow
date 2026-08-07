@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Follow-up Reminders | MediFlow</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="container mt-5">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-primary text-white">
+
+            <h2>Upcoming Follow-up Reminders</h2>
+
+        </div>
+
+        <div class="card-body">
+
+            {% if reminders %}
+
+            <table class="table table-bordered table-hover">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Patient ID</th>
+
+                        <th>Diagnosis</th>
+
+                        <th>Follow-up</th>
+
+                        <th>Date</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for reminder in reminders %}
+
+                    <tr>
+
+                        <td>{{ reminder.patient_id }}</td>
+
+                        <td>{{ reminder.diagnosis }}</td>
+
+                        <td>{{ reminder.follow_up }}</td>
+
+                        <td>{{ reminder.date }}</td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+            <div class="alert alert-info">
+
+                No follow-up reminders found.
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

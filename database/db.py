@@ -561,3 +561,36 @@ if __name__ == "__main__":
     print("Database ready.\n")
 
     view_documents()
+
+def get_upcoming_followups():
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT patient_id,
+               diagnosis,
+               follow_up_instructions,
+               date
+        FROM documents
+        WHERE follow_up_instructions IS NOT NULL
+          AND follow_up_instructions != ''
+        ORDER BY date DESC
+    """)
+
+    rows = cursor.fetchall()
+
+    connection.close()
+
+    reminders = []
+
+    for row in rows:
+
+        reminders.append({
+            "patient_id": row[0],
+            "diagnosis": row[1],
+            "follow_up": row[2],
+            "date": row[3]
+        })
+
+    return reminders
