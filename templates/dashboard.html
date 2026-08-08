@@ -241,6 +241,60 @@
 
 </div>
 
+<div class="row mt-4">
+
+    <div class="col-md-6 mb-4">
+
+        <div class="card shadow border-0 h-100">
+
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Medical Statistics</h5>
+            </div>
+
+            <div class="card-body">
+
+                <p>
+                    <strong>Most Common Diagnosis:</strong>
+                    {{ top_diagnosis }}
+                </p>
+
+                <p>
+                    <strong>Most Prescribed Medicine:</strong>
+                    {{ top_medicine }}
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6 mb-4">
+
+        <div class="card shadow border-0 h-100">
+
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Quick Actions</h5>
+            </div>
+
+            <div class="card-body">
+
+                <a href="/followups" class="btn btn-warning w-100 mb-2">
+                    Follow-up Reminders
+                </a>
+
+                <a href="/upload-page" class="btn btn-primary w-100">
+                    Upload Medical Document
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 </body>
 
 </html>
