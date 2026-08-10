@@ -161,3 +161,7 @@ This project was developed for educational and hackathon purposes.
 Harini T
 
 Artificial Intelligence and Machine Learning Engineering Student
+
+## Testing
+
+MediFlow core features were tested during development, including patient search, document history, timeline, safety alerts, prescription comparison, AI patient summary, PDF export, follow-up reminders, and dashboard navigation.
