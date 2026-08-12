@@ -1,48 +1,44 @@
 # MediFlow
 
-MediFlow is an AI-powered clinical decision support system that analyzes medical prescriptions using Optical Character Recognition (OCR) and a Large Language Model (LLM). The application extracts structured medical information, maintains a patient's medical history, and identifies potential medication safety issues through an intuitive web interface.
-
----
-
-## Project Overview
-
-Healthcare professionals often manage multiple prescriptions for the same patient, making it difficult to quickly review previous medications and identify duplicate prescriptions.
-
-MediFlow addresses this problem by:
-
-- Extracting structured information from prescription images
-- Maintaining a chronological patient timeline
-- Detecting duplicate medications
-- Displaying medication safety alerts
-- Providing an easy-to-use web interface for medical record review
-
----
+MediFlow is an AI-powered healthcare navigation application designed to organize, understand, and monitor patient medical information in one place.
 
 ## Features
 
-- Prescription image upload
-- OCR-based text extraction using Tesseract OCR
-- AI-powered medical information extraction using NVIDIA Llama API
-- Structured patient record storage using SQLite
-- Patient timeline visualization
+- Medical document upload
+- OCR-based text extraction
+- AI-powered medical information extraction
+- Patient profile management
+- Medical document history
+- Patient medical timeline
+- Prescription comparison
 - Duplicate medication detection
-- Medication safety dashboard
-- Responsive Bootstrap-based user interface
+- Drug interaction alerts
+- AI patient summary
+- Follow-up reminders
+- Patient history PDF export
+- Dashboard analytics
+- Responsive web interface
 
----
+## Tech Stack
 
-## Technology Stack
+### Backend
+- Python
+- Flask
+- SQLite
 
-| Category | Technologies |
-|----------|--------------|
-| Backend | Python, Flask |
-| AI Model | NVIDIA Llama 3.1 API |
-| OCR | Tesseract OCR |
-| Database | SQLite |
-| Frontend | HTML, Bootstrap 5 |
-| Version Control | Git, GitHub |
+### AI & Medical Processing
+- OCR
+- Pytesseract
+- AI-based medical information extraction
 
----
+### Frontend
+- HTML
+- CSS
+- Bootstrap
+- Jinja2
+
+### PDF Generation
+- ReportLab
 
 ## Project Structure
 
@@ -50,13 +46,8 @@ MediFlow addresses this problem by:
 MediFlow/
 │
 ├── app.py
-├── requirements.txt
-├── README.md
-├── .gitignore
-│
 ├── database/
-│   ├── db.py
-│   └── mediflow.db
+│   └── db.py
 │
 ├── services/
 │   ├── ai_service.py
@@ -64,104 +55,18 @@ MediFlow/
 │   └── timeline_service.py
 │
 ├── templates/
-│   ├── upload.html
-│   ├── result.html
+│   ├── dashboard.html
+│   ├── patient_profile.html
+│   ├── document_history.html
 │   ├── timeline.html
-│   └── safety.html
+│   ├── safety.html
+│   ├── compare.html
+│   ├── summary.html
+│   └── followups.html
+│
+├── static/
+│   └── style.css
 │
 ├── uploads/
-└── static/
-```
-
----
-
-## Application Workflow
-
-1. Upload a prescription image.
-2. Extract text using Tesseract OCR.
-3. Process the extracted text using the NVIDIA Llama model.
-4. Store structured medical information in SQLite.
-5. Generate a patient timeline.
-6. Detect duplicate medications.
-7. Display medication safety alerts.
-
----
-
-## Installation
-
-Clone the repository:
-
-```bash
-git clone https://github.com/harinisharma-t/MediFlow.git
-```
-
-Navigate to the project folder:
-
-```bash
-cd MediFlow
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Create a `.env` file and add:
-
-```env
-NVIDIA_API_KEY=your_api_key
-```
-
-Run the application:
-
-```bash
-python app.py
-```
-
-Open your browser and visit:
-
-```
-http://127.0.0.1:5000
-```
-
----
-
-## Current Modules
-
-- Medical Document Upload
-- OCR Pipeline
-- AI Information Extraction
-- Patient Timeline
-- Duplicate Medication Detection
-- Safety Dashboard
-
----
-
-## Future Enhancements
-
-- Drug-drug interaction detection
-- Duplicate diagnostic test detection
-- PDF report generation
-- Patient authentication
-- Doctor dashboard
-- Cloud deployment
-- Electronic Health Record (EHR) integration
-
----
-
-## License
-
-This project was developed for educational and hackathon purposes.
-
----
-
-## Author
-
-Harini T
-
-Artificial Intelligence and Machine Learning Engineering Student
-
-## Testing
-
-MediFlow core features were tested during development, including patient search, document history, timeline, safety alerts, prescription comparison, AI patient summary, PDF export, follow-up reminders, and dashboard navigation.
+├── database/
+└── README.md
