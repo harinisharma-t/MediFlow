@@ -70,3 +70,19 @@ MediFlow/
 ├── uploads/
 ├── database/
 └── README.md
+
+## Development Progress
+
+MediFlow is being developed incrementally with regular testing and feature improvements.
+
+Current modules include:
+
+- Patient management
+- Medical document processing
+- Medical timeline
+- Prescription comparison
+- Medication safety checks
+- AI patient summaries
+- Follow-up reminders
+- PDF report generation
+- Dashboard analytics
