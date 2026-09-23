@@ -13,7 +13,7 @@ from reportlab.lib.styles import (
 )
 
 from services.ai_service import (
-    extract_text_from_image,
+    extract_text,
     extract_medical_information
 )
 
@@ -44,6 +44,7 @@ from database.db import (
     get_top_medicine,
     get_upcoming_followups
 )
+
 
 app = Flask(__name__)
 
@@ -111,6 +112,7 @@ def patient_profile(patient_id):
         summary=summary
     )
 
+
 # =====================================================
 # Document History
 # =====================================================
@@ -140,6 +142,7 @@ def document_history(patient_id):
         documents=documents
     )
 
+
 # =====================================================
 # Compare Prescriptions
 # =====================================================
@@ -155,6 +158,7 @@ def compare_prescriptions(patient_id):
         comparison=comparison
     )
 
+
 # =====================================================
 # Upload Page
 # =====================================================
@@ -162,8 +166,6 @@ def compare_prescriptions(patient_id):
 @app.route("/upload-page")
 def upload_page():
     return render_template("upload.html")
-
-
 
 
 # =====================================================
@@ -189,7 +191,8 @@ def upload_file():
 
     uploaded_file.save(save_path)
 
-    ocr_text = extract_text_from_image(save_path)
+    # Extract text from either PDF or image
+    ocr_text = extract_text(save_path)
 
     document = extract_medical_information(
         ocr_text,
@@ -234,6 +237,7 @@ def upload_file():
         )
     )
 
+
 # =====================================================
 # Timeline
 # =====================================================
@@ -265,6 +269,7 @@ def safety_dashboard(patient_id):
         flags=flags
     )
 
+
 # =====================================================
 # AI Patient Summary
 # =====================================================
@@ -284,6 +289,7 @@ def patient_summary(patient_id):
         flags=flags
     )
 
+
 # =====================================================
 # Follow-up Reminders
 # =====================================================
@@ -297,6 +303,7 @@ def followups():
         "followups.html",
         reminders=reminders
     )
+
 
 # =====================================================
 # Export Patient History as PDF
@@ -401,6 +408,7 @@ def export_patient_pdf(patient_id):
         as_attachment=True,
         download_name=f"{patient_id}_report.pdf"
     )
+
 
 # =====================================================
 # Run Application
